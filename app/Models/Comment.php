@@ -10,7 +10,7 @@ class Comment extends Model {
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
 
-    protected $allowedFields = ['reply_id', 'item_id', 'user_id', 'comment', 'timestamp'];
+    protected $allowedFields = ['reply_id', 'item_id', 'user_id', 'comment'];
 }
 
 ?>

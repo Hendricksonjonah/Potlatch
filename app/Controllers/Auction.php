@@ -124,7 +124,6 @@ class Auction extends BaseController
                 'item_id' => $item_id,
                 'user_id' => $this->session->user->id,
                 'comment' => $comment
-                //'timestamp' =>
             ];
             if($itemCommentModel->insert($data)){
                 return redirect()->to('/auction/'.$item_id);
