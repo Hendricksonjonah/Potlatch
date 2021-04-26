@@ -38,13 +38,17 @@
                         <?php endif; ?>
                     </header>
                     <content>
-                        <?php if(!is_null($bidder['invite_id'])): ?>
-                            <div>Invite Code:&nbsp;<?= $bidder['invite_id']?></div>
-                        <?php endif; ?>
+                        <!-- Email of User or Invite.  -->
                         <?php if(!is_null($bidder['user_id'])): ?>
-                            <div>Email:&nbsp;<?= $bidder['user_email']?></div>
+                            <div><b>User Email:</b>&nbsp;<?= $bidder['user_email']?></div>
+                        <?php else: ?>
+                            <div><b>Invite Email:</b>&nbsp;<?= $bidder['invite_email']?></div>
                         <?php endif; ?>
-                        <div>Coins:&nbsp;<?= $bidder['coins']?></div>
+                        <?php if(!is_null($bidder['invite_id'])): ?>
+                            <!-- Invite code if user hasn't joined yet.-->
+                            <div><b>Invite Code:</b>&nbsp;<?= $bidder['invite_id']?></div>
+                        <?php endif; ?>
+                        <div><b>Coins:</b>&nbsp;<?= $bidder['coins']?></div>
                     </content>
                 </card>
             <?php endforeach; ?>
@@ -78,7 +82,7 @@
             <button class="close" data-id="bidder">Close</button>
         </header>
         <?= form_open('potlatch/addBidder') ?>
-            <input type="text" name="email" placeholder="Email" />
+            <input type="text" name="email" placeholder="Email" required/>
             <input type="number" name="coins" min="1" placeholder="# of coins" required/>
             <button type="submit">Add</button>
             <input name="potlatch_id" type="number" value="<?= $potlatch['id'] ?>" hidden/>

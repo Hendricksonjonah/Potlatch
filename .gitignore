@@ -1,2 +1,5 @@
 system/
 writable/
+*.png
+*.jpg
+*.jpeg

@@ -173,19 +173,20 @@ class Potlatch extends BaseController
             $email = $this->request->getVar('email', FILTER_VALIDATE_EMAIL);
             helper(['form', 'url', 'user', 'text']);
             // Check if potlatch is valid and if the user is the owner.
-            if($potlatch_id && $coins && isOwner($this->session->user->id, $potlatch_id)){
+            if($potlatch_id && $coins && $email && isOwner($this->session->user->id, $potlatch_id)){
                 $potlatchRosterModel = new \App\Models\PotlatchRoster();
                 $data = [
                     'potlatch_id' => $potlatch_id,
                     'coins' => $coins
                 ];
+                // Create new roster slot.
                 if($id = $potlatchRosterModel->insert($data)){
                     $rosterInviteModel = new \App\Models\RosterInvite();
-                    $randomId = random_string('crypto', 32);
+                    $randomId = random_string('crypto', 32); // Generate roster invite code.
                     $data = [
                         'id' => $randomId,
                         'roster_id' => $id,
-                        'email' => ($email) ? $email: NULL
+                        'email' => $email
                     ];
                     if($rosterInviteModel->insert($data, false)){
                         return redirect()->to('/potlatch/'.$potlatch_id);
@@ -202,7 +203,6 @@ class Potlatch extends BaseController
     public function joinPotlatch() {
         if(isset($this->session->user)){ // Check if signed in.
             helper('user');
-
             $inviteCode = $this->request->getVar('code', FILTER_SANITIZE_STRING);
             $rosterInviteModel = new \App\Models\RosterInvite();
             $rosterInvite = $rosterInviteModel->where('id', $inviteCode)->get()->getRow();
