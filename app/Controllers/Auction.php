@@ -109,6 +109,35 @@ class Auction extends BaseController
             return redirect()->to('/login');
         }
     }
+
+    public function comment(){
+        if(isset($this->session->user)){ // If signed in.
+            $validation = \Config\Services::validation();
+            helper(['url', 'user']);
+            // Get hidden inputs.
+            $item_id = $this->request->getVar('item_id', FILTER_VALIDATE_INT);
+            $comment = $this->request->getVar('comment', FILTER_SANITIZE_STRING);
+            $reply_id=NULL;
+            $itemCommentModel = new \App\Models\Comment();
+            $data = [
+                'reply_id'=> $reply_id,
+                'item_id' => $item_id,
+                'user_id' => $this->session->user->id,
+                'comment' => $comment
+                //'timestamp' =>
+            ];
+            if($itemCommentModel->insert($data)){
+                return redirect()->to('/auction/'.$item_id);
+            }else{
+                echo 'Failed to insert<hr>';
+                var_dump($data);
+                echo '<hr>';
+            }
+        }
+        else{
+            return redirect()->to('/login');
+        }
+    }
 }
 
 ?>

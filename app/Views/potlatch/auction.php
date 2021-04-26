@@ -40,6 +40,14 @@
         <input name="item_id" type="number" value="<?= $item['id'] ?>" hidden/>
         <input name="highestBid" type="number" value="<?= $highestBid['amount']?>" hidden/>
     </form>
+    <br>
+    <br>
+    <?= form_open('auction/comment') ?>
+        <input name="comment" type="text" required/>
+        <input name="item_id" type="number" value="<?= $item['id'] ?>" hidden/>
+        <button type="submit">Post</button>
+    </form>
+
 </section>
 <script
   src="https://code.jquery.com/jquery-3.5.1.min.js"
