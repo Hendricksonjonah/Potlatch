@@ -12,6 +12,8 @@ class Auction extends BaseController
             helper(['form', 'url', 'html', 'user']);
             $potlatchItemModel = new \App\Models\PotlatchItem();
             $potlatchItem = $potlatchItemModel->where('id', $id)->get()->getRow();
+            $itemCommentModel = new \App\Models\Comment();
+            $potlatchComment=$itemCommentModel->where('item_id', $id)->get()->getRow();
             // If item exists, and user has access.
             if($potlatchItem && hasAccess($this->session->user->id, $potlatchItem->potlatch_id)){
                 $data['title'] = 'Auction';
@@ -41,6 +43,12 @@ class Auction extends BaseController
             }else{
                 throw new \CodeIgniter\Exceptions\PageNotFoundException();
             }
+            //if comments exist
+            if($potlatchComment){
+                $potlatchComment=$potlatchComment->getResultArray();
+                $data['comments'] = $potlatchComment;
+            }
+
         }else{
             return redirect()->to('/login');
         }
@@ -114,7 +122,7 @@ class Auction extends BaseController
         if(isset($this->session->user)){ // If signed in.
             $validation = \Config\Services::validation();
             helper(['url', 'user']);
-            // Get hidden inputs.
+            // Get and validate inputs and hidden inputs.
             $item_id = $this->request->getVar('item_id', FILTER_VALIDATE_INT);
             $comment = $this->request->getVar('comment', FILTER_SANITIZE_STRING);
             $reply_id=NULL;
@@ -125,7 +133,8 @@ class Auction extends BaseController
                 'user_id' => $this->session->user->id,
                 'comment' => $comment
             ];
-            if($itemCommentModel->insert($data)){
+            //Redirect back to auction page if submission is succesful. 
+            if($itemCommentModel->insert($data, false)){
                 return redirect()->to('/auction/'.$item_id);
             }else{
                 echo 'Failed to insert<hr>';
@@ -133,6 +142,7 @@ class Auction extends BaseController
                 echo '<hr>';
             }
         }
+        //Redirect to login if not signed in. 
         else{
             return redirect()->to('/login');
         }

@@ -47,6 +47,19 @@
         <input name="item_id" type="number" value="<?= $item['id'] ?>" hidden/>
         <button type="submit">Post</button>
     </form>
+    <?php if(isset($comments )): ?>
+        <?php foreach($comments as $comment): ?>
+            <card>
+                <header><?= $comment['user_id'] ?></header>
+                <content><?= $comment['comment'] ?></content>
+                <footer>
+                    <?= $comment['timestamp']?>
+                </footer>
+            </card>
+        <?php endforeach; ?>
+    <?php else: ?>
+        There are no comments yet.
+    <?php endif; ?>
 
 </section>
 <script
