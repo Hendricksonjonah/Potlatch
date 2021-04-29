@@ -13,7 +13,7 @@ class Auction extends BaseController
             $potlatchItemModel = new \App\Models\PotlatchItem();
             $potlatchItem = $potlatchItemModel->where('id', $id)->get()->getRow();
             $itemCommentModel = new \App\Models\Comment();
-            $potlatchComment=$itemCommentModel->where('item_id', $id)->get()->getRow();
+            $potlatchComment=$itemCommentModel->where('item_id', $id)->get()->getRowArray();
             // If item exists, and user has access.
             if($potlatchItem && hasAccess($this->session->user->id, $potlatchItem->potlatch_id)){
                 $data['title'] = 'Auction';
@@ -37,18 +37,19 @@ class Auction extends BaseController
                         $data['images'][] = $file;
                     }
                 }catch(Exception $e){}
+                
+                 //if comments exist
+                if($potlatchComment){
+                    $data['comments'] = $potlatchComment;
+                }
+
                 echo view('potlatch/auction', $data);
 
                 echo view('components/footer');
             }else{
                 throw new \CodeIgniter\Exceptions\PageNotFoundException();
             }
-            //if comments exist
-            if($potlatchComment){
-                $potlatchComment=$potlatchComment->getResultArray();
-                $data['comments'] = $potlatchComment;
-            }
-
+           
         }else{
             return redirect()->to('/login');
         }

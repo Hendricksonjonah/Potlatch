@@ -50,10 +50,9 @@
     <?php if(isset($comments )): ?>
         <?php foreach($comments as $comment): ?>
             <card>
-                <header><?= $comment['user_id'] ?></header>
+                <header></header>
                 <content><?= $comment['comment'] ?></content>
                 <footer>
-                    <?= $comment['timestamp']?>
                 </footer>
             </card>
         <?php endforeach; ?>
