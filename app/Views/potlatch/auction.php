@@ -42,8 +42,10 @@
     </form>
     <br>
     <br>
-    <?= form_open('auction/comment') ?>
-        <input name="comment" type="text" required/>
+
+</section>
+<?= form_open('auction/comment') ?>
+        <textarea name="comment" type="text" required></textarea>
         <input name="item_id" type="number" value="<?= $item['id'] ?>" hidden/>
         <button type="submit">Post</button>
     </form>
@@ -55,7 +57,7 @@
                 <footer><?= $comment['timestamp']?>
                 </footer>
                 <?= form_open('auction/reply') ?>
-                    <input name="comment" type="text" required/>
+                    <textarea name="comment" type="text" required></textarea>
                     <input name="item_id" type="number" value="<?= $item['id'] ?>" hidden/>
                     <input name="reply_id" type="number" value="<?= $comment['id'] ?>" hidden/>
                     <button type="submit">Reply</button>
@@ -65,9 +67,6 @@
     <?php else: ?>
         There are no comments yet.
     <?php endif; ?>
-
-</section>
-
 <script
   src="https://code.jquery.com/jquery-3.5.1.min.js"
   integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="

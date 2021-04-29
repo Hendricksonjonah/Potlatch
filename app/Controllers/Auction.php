@@ -13,7 +13,7 @@ class Auction extends BaseController
             $potlatchItemModel = new \App\Models\PotlatchItem();
             $potlatchItem = $potlatchItemModel->where('id', $id)->get()->getRow();
             $itemCommentModel = new \App\Models\Comment();
-            $potlatchComment=$itemCommentModel->where('item_id', $id)->findAll();
+            $potlatchComment=$itemCommentModel->where(['item_id' => $id, 'reply_id' =>NULL])->findAll();
             // If item exists, and user has access.
             if($potlatchItem && hasAccess($this->session->user->id, $potlatchItem->potlatch_id)){
                 $data['title'] = 'Auction';
