@@ -19,11 +19,13 @@ class Account extends BaseController
         }
 	}
 
+    // Edit account information. (Not finished.)
     public function edit() {
-        if(!isset($this->session->user)){
+        if(!isset($this->session->user)){ // If signed in.
             $validation = \Config\Services::validation();
             helper(['form', 'url']);
 
+            // Validate email if provided.
             if($this->validate(['email' => 'valid_email|is_unique[users.email]'])){
                 $fName = $this->request->getVar('first_name', FILTER_SANITIZE_STRING);
                 $lName = $this->request->getVar('last_name', FILTER_SANITIZE_STRING);

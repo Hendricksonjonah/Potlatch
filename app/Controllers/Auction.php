@@ -10,8 +10,11 @@ class Auction extends BaseController
     public function view($id) {
         if(isset($this->session->user)){ // If signed in.
             helper(['form', 'url', 'html', 'user']);
+
+            // Get the item from database.
             $potlatchItemModel = new \App\Models\PotlatchItem();
             $potlatchItem = $potlatchItemModel->where('id', $id)->get()->getRow();
+
             // If item exists, and user has access.
             if($potlatchItem && hasAccess($this->session->user->id, $potlatchItem->potlatch_id)){
                 $data['title'] = 'Auction';
@@ -20,17 +23,26 @@ class Auction extends BaseController
                 unset($data);
 
                 $itemBidModel = new \App\Models\ItemBid();
+
+                // Get's row with highest amount. But only returns the amount...
                 $highestBid = $itemBidModel->where('item_id', $id)->selectMax('amount')->get()->getRow();
+                // So we use the item_id and the amount to get the proper row with all the information.
                 $highestBid = $itemBidModel->where(['item_id' => $id, 'amount' => $highestBid->amount])->get()->getRow();
+
+                // Setting data to be passed to the view.
                 $data['item'] = (array)$potlatchItem;
                 $data['highestBid'] = (array)$highestBid;
-                $data['isOwner'] = isOwner($this->session->user->id, $potlatchItem->potlatch_id);
-                $data['isHighestBidder'] = $highestBid->user_id == $this->session->user->id;
-                $data['canBid'] = (!$data['isOwner'] && !$data['isHighestBidder'] && $highestBid->amount+1 <= getAvailableCoins($this->session->user->id, $potlatchItem->potlatch_id));
+                $data['isOwner'] = isOwner($this->session->user->id, $potlatchItem->potlatch_id); // Check if isOwner of potlatch.
+                $data['isHighestBidder'] = $highestBid->user_id == $this->session->user->id;      // Check if highest bidder.
+                $data['canBid'] = (!$data['isOwner'] &&                                           // Check whether can bid.
+                                   !$data['isHighestBidder'] &&
+                                   $highestBid->amount+1 <= getAvailableCoins($this->session->user->id, $potlatchItem->potlatch_id));
                 // Get list of all images in item folder.
                 try{
+                    // Get all files/directories in folder images/potlatch_id/item_id
                     $files = scandir('images/'.$potlatchItem->potlatch_id.'/'.$potlatchItem->id);
                     foreach($files as $file) {
+                        // Check if not a file.
                         if($file == '.' || $file == '..') continue;
                         $data['images'][] = $file;
                     }

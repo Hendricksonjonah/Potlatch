@@ -18,7 +18,7 @@ class Signup extends BaseController {
                 'validation' => $this->validator
             ]);
         }else{
-            $password = trim($this->request->getVar('password'));
+            $password = trim($this->request->getVar('password', FILTER_SANITIZE_STRING));
             $userModel = new \App\Models\User();
             // Validate data
             $data = [

@@ -20,7 +20,7 @@ class Potlatch extends BaseController
             $managed = $potlatchModel->where('user_id', $this->session->user->id)->findAll();
             $data['managed'] = $managed;
 
-            // Select potlatchs that you are on the roster for.
+            // Select potlatchs that user is on the roster for.
             $db = db_connect();
             $joined = $db->query('SELECT potlatch.* FROM roster INNER JOIN potlatch ON roster.potlatch_id = potlatch.id  WHERE roster.user_id = ?',
                 [$this->session->user->id])->getResultArray();
@@ -55,10 +55,11 @@ class Potlatch extends BaseController
                 $potlatchItemModel = new \App\Models\PotlatchItem();
                 $potlatchItems = $potlatchItemModel->where('potlatch_id', $id)->get();
                 if($potlatchItems){
-                    $potlatchItems = $potlatchItems->getResultArray();
+                    $potlatchItems = $potlatchItems->getResultArray(); // Convert to array for passing to the view.
                     $data['items'] = $potlatchItems;
                 }
 
+                // Get everyone that joined the potlatch, if user is the owner.
                 if($data['isOwner']){
                     $db = db_connect();
                     $roster = $db->query(
@@ -147,6 +148,7 @@ class Potlatch extends BaseController
                                 {
                                     $newName = $img->getRandomName();
                                     try{
+                                        // Move image to potlatch image folder.
                                         $img->move('images/'.$potlatch_id.'/'.$item_id, $newName);
                                     }catch(Exception $e){
                                         echo $e->getMessage();
@@ -168,7 +170,7 @@ class Potlatch extends BaseController
     public function addBidder() {
         if(isset($this->session->user)){ // Check if signed in.
             // Get potlatch id from hidden form input.
-            $potlatch_id = $this->request->getVar('potlatch_id', FILTER_VALIDATE_INT);
+            $potlatch_id = $this->request->getVar('potlatch_id', FILTER_VALIDATE_INT); // Should use session to store in future.
             $coins = $this->request->getVar('coins', FILTER_VALIDATE_INT);
             $email = $this->request->getVar('email', FILTER_VALIDATE_EMAIL);
             helper(['form', 'url', 'user', 'text']);
@@ -201,18 +203,21 @@ class Potlatch extends BaseController
     }
 
     public function joinPotlatch() {
-        if(isset($this->session->user)){ // Check if signed in.
-            helper('user');
+        if(isset($this->session->user)){                                            // Check if signed in.
+            helper('user');                                                         // Load user helper.
+            // Get invite from database using provided code.
             $inviteCode = $this->request->getVar('code', FILTER_SANITIZE_STRING);
             $rosterInviteModel = new \App\Models\RosterInvite();
             $rosterInvite = $rosterInviteModel->where('id', $inviteCode)->get()->getRow();
-            if($rosterInvite){
+            if($rosterInvite){                                                      // Check if invite is valid.
+                // Get roster row from database using invite roster_id.
                 $potlatchRosterModel = new \App\Models\PotlatchRoster();
                 $roster = $potlatchRosterModel->where('id', $rosterInvite->roster_id);
-                if($roster){
-                    if(!isOwner($this->session->user->id, $roster->potlatch_id)){
+                if($roster){                                                        // Check if roster is valid.
+                    if(!isOwner($this->session->user->id, $roster->potlatch_id)){   // Check if user is not the owner.
+                        // Update roster with the users id.
                         if($potlatchRosterModel->update($roster->id, ['user_id' => $this->session->user->id])){
-                            $rosterInviteModel->where('id', $inviteCode)->delete();
+                            $rosterInviteModel->where('id', $inviteCode)->delete(); // Delete the invite.
                             return redirect()->to('/potlatch/'.$roster->potlatch_id);
                         }else{ throw new \CodeIgniter\Exceptions\PageNotFoundException(); }
                     }else{ throw new \CodeIgniter\Exceptions\PageNotFoundException(); }

@@ -28,9 +28,9 @@ class Login extends BaseController {
                 //$rememberMe = $this->request->getVar('rememberMe');
                 $userModel = new \App\Models\User();
                 $user = $userModel->where('email', $email)->get()->getRow();
-                if(password_verify($password, $user->password)){
-                    unset($user->password);
-                    $this->session->set('user', $user);
+                if($user && password_verify($password, $user->password)){
+                    unset($user->password);             // Unset password for safety sake.
+                    $this->session->set('user', $user); // Store user info in session.
                     //if(isset($rememberMe)) set_cookie('user', $user);
                     return redirect()->to('/');
                 }else{
