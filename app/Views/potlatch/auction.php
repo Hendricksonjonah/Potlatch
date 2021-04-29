@@ -54,3 +54,23 @@
         $('carousel images > img:first-child').appendTo('carousel images');
     });
 </script>
+
+
+<div id="insert_comments" class="container" ></div>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+<?= script_tag(['src' => 'js/Comments.js', 'type' => 'text/babel']) ?>
+<script type="text/babel">
+    const comments= [
+        {"first_name": "Brett",
+         "last_name": "Johnson",
+         "comment": "This is a comment.",
+         "timestamp": Date.now()}
+    ];
+
+    console.log(comments);
+    ReactDOM.render(
+        <CommentDisplay comments={comments}/>,
+        document.getElementById('insert_comments'));
+</script>
