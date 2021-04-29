@@ -48,12 +48,18 @@
         <button type="submit">Post</button>
     </form>
     <?php if(isset($comments )): ?>
-        <?php foreach($comments as $comment): ?>
+      <?php foreach($comments as $comment): ?>
             <card>
-                <header></header>
+                <header><?= $comment['']?></header>
                 <content><?= $comment['comment'] ?></content>
-                <footer>
+                <footer><?= $comment['timestamp']?>
                 </footer>
+                <?= form_open('auction/reply') ?>
+                    <input name="comment" type="text" required/>
+                    <input name="item_id" type="number" value="<?= $item['id'] ?>" hidden/>
+                    <input name="reply_id" type="number" value="<?= $comment['id'] ?>" hidden/>
+                    <button type="submit">Reply</button>
+                </form>
             </card>
         <?php endforeach; ?>
     <?php else: ?>
@@ -61,6 +67,7 @@
     <?php endif; ?>
 
 </section>
+
 <script
   src="https://code.jquery.com/jquery-3.5.1.min.js"
   integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
