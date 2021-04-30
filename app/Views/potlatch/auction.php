@@ -39,6 +39,7 @@
         <?php endif; ?>
         <input name="item_id" type="number" value="<?= $item['id'] ?>" hidden/>
         <input name="highestBid" type="number" value="<?= $highestBid['amount']?>" hidden/>
+        <p><?= $item['description']?></p>
     </form>
     <br>
     <br>
@@ -50,9 +51,10 @@
         <button type="submit">Post</button>
     </form>
     <?php if(isset($comments )): ?>
-      <?php foreach($comments as $comment): ?>
+        <?php foreach($comments as $comment): ?>
             <card>
-                <header><?= $comment['']?></header>
+                <header><?= $comment['first_name']?></header>
+                <header><?= $comment['last_name']?></header>
                 <content><?= $comment['comment'] ?></content>
                 <footer><?= $comment['timestamp']?>
                 </footer>
